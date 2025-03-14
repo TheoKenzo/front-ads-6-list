@@ -2,13 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  keyAccessFormSchema,
   KeyAccessFormSchemaInput,
   KeyAccessFormSchemaOutput,
 } from "./key-access-form-schema";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretRight } from "@phosphor-icons/react";
 
 export default function Home() {
@@ -17,6 +25,7 @@ export default function Home() {
     unknown,
     KeyAccessFormSchemaOutput
   >({
+    resolver: zodResolver(keyAccessFormSchema),
     defaultValues: {
       keyAccess: "",
     },
@@ -35,7 +44,17 @@ export default function Home() {
                 })}
                 className="flex flex-col gap-2 w-full"
               >
-                <Input placeholder="Chave" />
+                <FormField
+                  name="keyAccess"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Chave" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="flex justify-end w-full">
                   <Button>
