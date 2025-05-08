@@ -18,11 +18,13 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretRight } from "@phosphor-icons/react";
-import { useState } from "react";
 import { useVerifyAccessKey } from "@/api/auth/hooks";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const accessKeyForm = useForm<
     AccessKeyFormSchemaInput,
     unknown,
@@ -39,7 +41,10 @@ export default function Home() {
   const handleVerifyAccessKey = async (data: AccessKeyFormSchemaOutput) => {
     try {
       const response = await verifyAccessKey({ accessKey: data.accessKey });
-      console.log("sucesso: ", response);
+
+      if (response) {
+        router.push("/login");
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("error: ", error.response?.data);

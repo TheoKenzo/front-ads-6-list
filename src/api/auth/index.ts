@@ -1,4 +1,5 @@
 import { apiUrl } from "../config";
+import { supabase } from "@/lib/supabase";
 
 export const authApi = {
   async verifyAccessKey({ accessKey }: { accessKey: string }) {
@@ -7,5 +8,20 @@ export const authApi = {
     });
 
     return data;
+  },
+
+  async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<Error | null> {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    return error;
   },
 };

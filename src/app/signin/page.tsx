@@ -12,42 +12,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useForm } from "react-hook-form";
-import {
-  logInFormSchema,
-  LogInFormSchemaInput,
-  LogInFormSchemaOutput,
-} from "./login-form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/api/auth";
+import {
+  signInFormSchema,
+  SignInFormSchemaInput,
+  SignInFormSchemaOutput,
+} from "./sign-form.schema";
 
-export default function LogIn() {
+export default function SignIn() {
   const router = useRouter();
 
-  const loginForm = useForm<
-    LogInFormSchemaInput,
+  const signinForm = useForm<
+    SignInFormSchemaInput,
     unknown,
-    LogInFormSchemaOutput
+    SignInFormSchemaOutput
   >({
-    resolver: zodResolver(logInFormSchema),
+    resolver: zodResolver(signInFormSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
-
-  const handleLogIn = async (data: LogInFormSchemaOutput) => {
-    const response = authApi.login({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (response instanceof Error) {
-      console.log("error: ", response);
-    } else {
-      router.push("/application");
-    }
-  };
 
   return (
     <main className="flex flex-col items-center justify-center w-full min-h-screen">
@@ -61,14 +48,26 @@ export default function LogIn() {
             >
               <CaretLeft size={16} weight="bold" />
             </Button>
-            Entrar
+            Cadastrar-se
           </CardTitle>
           <CardContent className="flex flex-col w-full p-0">
-            <Form {...loginForm}>
+            <Form {...signinForm}>
               <form
-                onSubmit={loginForm.handleSubmit(handleLogIn)}
+                onSubmit={signinForm.handleSubmit(() => {})}
                 className="flex flex-col gap-2 w-full"
               >
+                <FormField
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Nome completo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   name="email"
                   render={({ field }) => (
@@ -98,9 +97,9 @@ export default function LogIn() {
                     type="button"
                     variant="outline"
                     className="border-primary text-primary font-bold"
-                    onClick={() => router.push("/signin")}
+                    onClick={() => router.push("/login")}
                   >
-                    Cadastrar-se
+                    Entrar
                   </Button>
 
                   <Button className="font-bold">
