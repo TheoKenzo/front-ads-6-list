@@ -11,25 +11,43 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  keyAccessFormSchema,
-  KeyAccessFormSchemaInput,
-  KeyAccessFormSchemaOutput,
+  accessKeyFormSchema,
+  AccessKeyFormSchemaInput,
+  AccessKeyFormSchemaOutput,
 } from "./key-access-form-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretRight } from "@phosphor-icons/react";
+import { useState } from "react";
+import { useVerifyAccessKey } from "@/api/auth/hooks";
+import { AxiosError } from "axios";
 
 export default function Home() {
-  const keyAccessForm = useForm<
-    KeyAccessFormSchemaInput,
+  const accessKeyForm = useForm<
+    AccessKeyFormSchemaInput,
     unknown,
-    KeyAccessFormSchemaOutput
+    AccessKeyFormSchemaOutput
   >({
-    resolver: zodResolver(keyAccessFormSchema),
+    resolver: zodResolver(accessKeyFormSchema),
     defaultValues: {
-      keyAccess: "",
+      accessKey: "",
     },
   });
+
+  const { mutateAsync: verifyAccessKey } = useVerifyAccessKey();
+
+  const handleVerifyAccessKey = async (data: AccessKeyFormSchemaOutput) => {
+    try {
+      const response = await verifyAccessKey({ accessKey: data.accessKey });
+      console.log("sucesso: ", response);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log("error: ", error.response?.data);
+      } else {
+        console.log("error: ", error);
+      }
+    }
+  };
 
   return (
     <main className="flex flex-col items-center justify-center w-full min-h-screen">
@@ -37,15 +55,13 @@ export default function Home() {
         <CardHeader className="flex flex-col gap-4 w-full">
           <CardTitle>Chave de acesso</CardTitle>
           <CardContent className="flex flex-col w-full p-0">
-            <Form {...keyAccessForm}>
+            <Form {...accessKeyForm}>
               <form
-                onSubmit={keyAccessForm.handleSubmit(() => {
-                  console.log("submit");
-                })}
+                onSubmit={accessKeyForm.handleSubmit(handleVerifyAccessKey)}
                 className="flex flex-col gap-2 w-full"
               >
                 <FormField
-                  name="keyAccess"
+                  name="accessKey"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
