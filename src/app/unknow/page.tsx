@@ -24,7 +24,10 @@ export default function NotFoundOrUnauthorized() {
 
   return (
     <main className="flex flex-col items-center justify-center w-full min-h-screen">
-      <p>You shouldn't be here{dots}</p>
+      <p>
+        {"You shouldn't be here"}
+        {dots}
+      </p>
       <p className="font-semibold">{`ʘᆽʘ`}</p>
     </main>
   );
